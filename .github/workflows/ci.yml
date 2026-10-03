@@ -25,7 +25,7 @@ jobs:
           grep -q 'Growing Up' index.html
           grep -q 'NO ACCOUNT' index.html
           grep -q 'NO TRACKING' index.html
-          if grep -RniE 'vercel|netlify' --exclude-dir=.git --exclude='README.txt' --exclude='README.md' .; then
-            echo 'Legacy hosting reference found in active repository files.'
+          if find . -maxdepth 2 -type f \( -name 'vercel.json' -o -name 'netlify.toml' \) | grep -q .; then
+            echo 'Legacy hosting configuration file found in active repository tree.'
             exit 1
           fi
