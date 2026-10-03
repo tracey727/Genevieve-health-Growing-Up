@@ -1,0 +1,31 @@
+name: Static Prototype Integrity
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify required prototype files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s index.html
+          test -s app.js
+          test -s styles.css
+          test -s README.md
+          grep -q 'Growing Up' index.html
+          grep -q 'NO ACCOUNT' index.html
+          grep -q 'NO TRACKING' index.html
+          if grep -RniE 'vercel|netlify' --exclude-dir=.git --exclude='README.txt' .; then
+            echo 'Legacy hosting reference found in active repository files.'
+            exit 1
+          fi
